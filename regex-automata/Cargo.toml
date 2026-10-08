@@ -23,7 +23,7 @@ bench = false
 [features]
 default = ["std", "syntax", "perf", "unicode", "meta", "nfa", "dfa", "hybrid"]
 std = ["regex-syntax?/std", "memchr?/std", "aho-corasick?/std", "alloc"]
-alloc = []
+alloc = ["memchr?/alloc"]
 logging = ["dep:log", "aho-corasick?/logging", "memchr?/logging"]
 
 syntax = ["dep:regex-syntax", "alloc"]

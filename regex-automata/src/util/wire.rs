@@ -863,10 +863,11 @@ pub(crate) enum LE {}
 /// Big endian writing.
 pub(crate) enum BE {}
 
-#[cfg(target_endian = "little")]
-pub(crate) type NE = LE;
-#[cfg(target_endian = "big")]
-pub(crate) type NE = BE;
+/// Native endian writing.
+pub(crate) type NE = cfg_select! {
+    target_endian = "big" => BE,
+    _ => LE,
+};
 
 impl Endian for LE {
     fn write_u16(n: u16, dst: &mut [u8]) {
