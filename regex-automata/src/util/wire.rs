@@ -863,9 +863,28 @@ pub(crate) enum LE {}
 /// Big endian writing.
 pub(crate) enum BE {}
 
-#[cfg(target_endian = "little")]
+/// Native endian writing.
+#[cfg(target_abi = "polyasm")]
+pub(crate) enum NE {}
+
+#[cfg(target_abi = "polyasm")]
+impl Endian for NE {
+    fn write_u16(n: u16, dst: &mut [u8]) {
+        dst[..2].copy_from_slice(&n.to_ne_bytes());
+    }
+
+    fn write_u32(n: u32, dst: &mut [u8]) {
+        dst[..4].copy_from_slice(&n.to_ne_bytes());
+    }
+
+    fn write_u128(n: u128, dst: &mut [u8]) {
+        dst[..16].copy_from_slice(&n.to_ne_bytes());
+    }
+}
+
+#[cfg(all(not(target_abi = "polyasm"), target_endian = "little"))]
 pub(crate) type NE = LE;
-#[cfg(target_endian = "big")]
+#[cfg(all(not(target_abi = "polyasm"), target_endian = "big"))]
 pub(crate) type NE = BE;
 
 impl Endian for LE {

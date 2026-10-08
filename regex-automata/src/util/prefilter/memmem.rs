@@ -5,9 +5,9 @@ use crate::util::{
 
 #[derive(Clone, Debug)]
 pub(crate) struct Memmem {
-    #[cfg(not(all(feature = "std", feature = "perf-literal-substring")))]
+    #[cfg(not(all(feature = "alloc", feature = "perf-literal-substring")))]
     _unused: (),
-    #[cfg(all(feature = "std", feature = "perf-literal-substring"))]
+    #[cfg(all(feature = "alloc", feature = "perf-literal-substring"))]
     finder: memchr::memmem::Finder<'static>,
 }
 
@@ -16,11 +16,11 @@ impl Memmem {
         _kind: MatchKind,
         needles: &[B],
     ) -> Option<Memmem> {
-        #[cfg(not(all(feature = "std", feature = "perf-literal-substring")))]
+        #[cfg(not(all(feature = "alloc", feature = "perf-literal-substring")))]
         {
             None
         }
-        #[cfg(all(feature = "std", feature = "perf-literal-substring"))]
+        #[cfg(all(feature = "alloc", feature = "perf-literal-substring"))]
         {
             if needles.len() != 1 {
                 return None;
@@ -38,11 +38,11 @@ impl PrefilterI for Memmem {
     }
 
     fn find(&self, haystack: &[u8], span: Span) -> Option<Span> {
-        #[cfg(not(all(feature = "std", feature = "perf-literal-substring")))]
+        #[cfg(not(all(feature = "alloc", feature = "perf-literal-substring")))]
         {
             unreachable!()
         }
-        #[cfg(all(feature = "std", feature = "perf-literal-substring"))]
+        #[cfg(all(feature = "alloc", feature = "perf-literal-substring"))]
         {
             self.finder.find(&haystack[span]).map(|i| {
                 let start = span.start + i;
@@ -53,11 +53,11 @@ impl PrefilterI for Memmem {
     }
 
     fn prefix(&self, haystack: &[u8], span: Span) -> Option<Span> {
-        #[cfg(not(all(feature = "std", feature = "perf-literal-substring")))]
+        #[cfg(not(all(feature = "alloc", feature = "perf-literal-substring")))]
         {
             unreachable!()
         }
-        #[cfg(all(feature = "std", feature = "perf-literal-substring"))]
+        #[cfg(all(feature = "alloc", feature = "perf-literal-substring"))]
         {
             let needle = self.finder.needle();
             if haystack[span].starts_with(needle) {
@@ -69,22 +69,22 @@ impl PrefilterI for Memmem {
     }
 
     fn memory_usage(&self) -> usize {
-        #[cfg(not(all(feature = "std", feature = "perf-literal-substring")))]
+        #[cfg(not(all(feature = "alloc", feature = "perf-literal-substring")))]
         {
             unreachable!()
         }
-        #[cfg(all(feature = "std", feature = "perf-literal-substring"))]
+        #[cfg(all(feature = "alloc", feature = "perf-literal-substring"))]
         {
             self.finder.needle().len()
         }
     }
 
     fn is_fast(&self) -> bool {
-        #[cfg(not(all(feature = "std", feature = "perf-literal-substring")))]
+        #[cfg(not(all(feature = "alloc", feature = "perf-literal-substring")))]
         {
             unreachable!()
         }
-        #[cfg(all(feature = "std", feature = "perf-literal-substring"))]
+        #[cfg(all(feature = "alloc", feature = "perf-literal-substring"))]
         {
             true
         }
